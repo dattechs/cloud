@@ -1,0 +1,37 @@
+version: '2'
+services:
+  nextcloud:
+    image: schoeffm/rpi-nextcloud
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - mysql
+      - data
+    networks:
+      - nextcloud    
+    volumes: 
+      - ${RPI_STORAGE_BASE_DIR}:${NEXTCLOUD_STORAGE_BASE_DIR}
+    volumes_from:
+      - data 
+    environment:
+        NEXTCLOUD_SERVERNAME: ${NEXTCLOUD_SERVERNAME}
+        NEXTCLOUD_DIFFIE_HELLMAN: ${NEXTCLOUD_DIFFIE_HELLMAN} 
+        NEXTCLOUD_DB_USER: ${NEXTCLOUD_DB_USER}
+        NEXTCLOUD_DB_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}        
+        NEXTCLOUD_STORAGE_BASE_DIR: ${NEXTCLOUD_STORAGE_BASE_DIR} 
+  mysql:
+    image: schoeffm/rpi-nextcloud-mysql
+    ports:
+        - "3306:3306"
+    environment:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
+        NEXTCLOUD_DB_USER: ${NEXTCLOUD_DB_USER}
+        NEXTCLOUD_DB_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
+    networks:
+      - nextcloud
+  data:
+    image: schoeffm/rpi-nextcloud-data
+networks:
+  nextcloud:
+    driver: bridge
