@@ -1,7 +1,7 @@
 version: '2'
 services:
-  nextcloud:
-    image: schoeffm/rpi-nextcloud
+  owncloud:
+    image: schoeffm/rpi-owncloud
     ports:
       - "80:80"
       - "443:443"
@@ -9,29 +9,26 @@ services:
       - mysql
       - data
     networks:
-      - nextcloud    
-    volumes: 
-      - ${RPI_STORAGE_BASE_DIR}:${NEXTCLOUD_STORAGE_BASE_DIR}
+      - owncloud
     volumes_from:
       - data 
     environment:
-        NEXTCLOUD_SERVERNAME: ${NEXTCLOUD_SERVERNAME}
-        NEXTCLOUD_DIFFIE_HELLMAN: ${NEXTCLOUD_DIFFIE_HELLMAN} 
-        NEXTCLOUD_DB_USER: ${NEXTCLOUD_DB_USER}
-        NEXTCLOUD_DB_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}        
-        NEXTCLOUD_STORAGE_BASE_DIR: ${NEXTCLOUD_STORAGE_BASE_DIR} 
+      OWNCLOUD_SERVERNAME: dockerpi
+      OWNCLOUD_DIFFIE_HELLMAN: "off"
+      OWNCLOUD_DB_USER: owncloud
+      OWNCLOUD_DB_PASSWORD: dattechs2018
   mysql:
-    image: schoeffm/rpi-nextcloud-mysql
-    ports:
-        - "3306:3306"
-    environment:
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
-        NEXTCLOUD_DB_USER: ${NEXTCLOUD_DB_USER}
-        NEXTCLOUD_DB_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
+    image: schoeffm/rpi-owncloud-mysql
+    expose:
+      - "3306"
     networks:
-      - nextcloud
+      - owncloud
+    environment:
+      MYSQL_ROOT_PASSWORD: dattechs2018
+      OWNCLOUD_DB_USER: owncloud
+      OWNCLOUD_DB_PASSWORD: dattechs2018
   data:
-    image: schoeffm/rpi-nextcloud-data
+    image: schoeffm/rpi-owncloud-data
 networks:
-  nextcloud:
+  owncloud:
     driver: bridge
